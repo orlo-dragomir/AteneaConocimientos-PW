@@ -5,12 +5,14 @@ export class PaginaDashboard {
     readonly linkMisTalleres: Locator;
     readonly botonMenuUsuario: Locator;
     readonly opcionCerrarSesion: Locator;
+    readonly headingTalleresDisponibles: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.linkMisTalleres = page.getByRole('tab', { name: 'Mis Talleres' });
         this.botonMenuUsuario = page.getByRole('button', { name: /account of current user/i });
         this.opcionCerrarSesion = page.getByRole('menuitem', { name: 'Cerrar Sesión' });
+        this.headingTalleresDisponibles = page.getByRole('heading', { name: 'Talleres disponibles' });
     }
 
     async navegarADashboard() {
@@ -29,5 +31,24 @@ export class PaginaDashboard {
     async cerrarSesionDesdeMenu() {
         await this.abrirMenuUsuario();
         await this.opcionCerrarSesion.click();
+    }
+
+    async accederATallerGratis(nombreTaller: string) {
+        await this.headingTalleresDisponibles.waitFor({ state: 'visible' });
+        const tarjeta = this.obtenerTarjetaDeTaller(nombreTaller);
+        const botonAcceder = tarjeta.getByRole('button', { name: /Acceder gratis/i });
+        await botonAcceder.waitFor({ state: 'visible' });
+        await Promise.all([this.page.waitForURL(/\/workshops\//), botonAcceder.click()]);
+    }
+
+    private obtenerTarjetaDeTaller(nombreTaller: string) {
+        const heading = this.page.getByRole('heading', {
+            name: new RegExp(`^${this.escapeRegex(nombreTaller)}$`, 'i'),
+        });
+        return heading.locator('..').locator('..');
+    }
+
+    private escapeRegex(valor: string) {
+        return valor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 }
