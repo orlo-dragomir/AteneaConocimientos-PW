@@ -7,11 +7,8 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 docs
-
-# Configuracion local
 .env
-.env.*
-.env.local
+.env.qa
 
 # IDEs y SO
 .DS_Store
