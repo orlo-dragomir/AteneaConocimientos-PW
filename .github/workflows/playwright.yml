@@ -113,6 +113,13 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install chromium
 
+      - name: Create .env file
+        run: |
+          echo "E2E_USER=${{ secrets.E2E_USER }}" >> .env
+          echo "E2E_PASS=${{ secrets.E2E_PASS }}" >> .env
+          echo "E2E_ADMIN_USER=${{ secrets.E2E_ADMIN_USER }}" >> .env
+          echo "E2E_ADMIN_PASS=${{ secrets.E2E_ADMIN_PASS }}" >> .env
+
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ env.QA_URL }}
@@ -140,7 +147,8 @@ jobs:
             traces=()
           fi
           if [ "${#traces[@]}" -gt 0 ]; then
-            zip -j "$trace_bundle" "${traces[@]}"
+            # Keep directory structure to avoid duplicate filenames (e.g., multiple trace.zip)
+            zip "$trace_bundle" "${traces[@]}"
           else
             echo "No trace files generated." > artifacts/trace-info.txt
             zip -j "$trace_bundle" artifacts/trace-info.txt
