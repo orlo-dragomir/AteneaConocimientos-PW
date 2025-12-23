@@ -80,6 +80,12 @@ export class PaginaCentroSoporte {
         await expect(this.dialogoCrearTicket).toBeVisible();
     }
 
+    async registrarTicket(ticket: DatosTicketSoporte) {
+        await this.abrirModalCrearTicket();
+        await this.completarFormulario(ticket);
+        await this.crearTicket();
+    }
+
     async completarFormulario(ticket: DatosTicketSoporte) {
         await this.inputTitulo.fill(ticket.titulo);
         await this.inputDescripcion.fill(ticket.descripcion);

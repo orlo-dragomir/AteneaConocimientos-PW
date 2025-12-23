@@ -13,7 +13,7 @@ test.beforeEach(async ({ page, sesionActiva }) => {
     await paginaCentroSoporte.navegarAPerfil();
 });
 
-test('TC-24: Crear ticket desde el centro de soporte', { tag: '@smoke' }, async () => {
+test('TC-19: Crear ticket de soporte', { tag: '@smoke' }, async () => {
     const timestamp = Date.now();
     const datosTicket: DatosTicketSoporte = {
         titulo: `Ticket ${timestamp}`,
@@ -30,8 +30,6 @@ test('TC-24: Crear ticket desde el centro de soporte', { tag: '@smoke' }, async 
         helpers.esperarPorRespuestaAPI('/tickets/access', 'GET', 200),
         paginaCentroSoporte.abrirCentroDeSoporte(),
     ]);
-    await paginaCentroSoporte.abrirModalCrearTicket();
-    await paginaCentroSoporte.completarFormulario(datosTicket);
     const esperarCheckDuplicates = helpers.esperarPorRespuestaAPI(
         '/tickets/check-duplicates',
         'POST',
@@ -39,7 +37,7 @@ test('TC-24: Crear ticket desde el centro de soporte', { tag: '@smoke' }, async 
     );
     const esperarCreacion = helpers.esperarPorRespuestaAPI('/tickets', 'POST', 201);
     const esperarActualizacion = helpers.esperarPorRespuestaAPI('/tickets/my', 'GET', 200);
-    await paginaCentroSoporte.crearTicket();
+    await paginaCentroSoporte.registrarTicket(datosTicket);
     await Promise.all([esperarCheckDuplicates, esperarCreacion, esperarActualizacion]);
 
     await paginaCentroSoporte.validarNotificacionDeExito();
